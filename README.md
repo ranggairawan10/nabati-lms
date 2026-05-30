@@ -23,6 +23,8 @@ Fitur yang sudah jalan di prototipe ini:
    - `supabase/03_seed_org_design.sql` (kursus HC: Merancang Organisasi di Era Efisiensi)
    - `supabase/04_admin.sql` (kamus kompetensi, skill matrix peran, klasifikasi modul, data contoh)
    - `supabase/05_dashboard.sql` (target jam, gamifikasi/badge, kenaikan kompetensi otomatis, RPC dashboard)
+   - `supabase/06_more_od_courses.sql` (4 kursus OD tambahan, masing-masing 5 bagian berurutan + tes lewati)
+   - `supabase/07_video_timing.sql` (penyesuaian titik pertanyaan-dalam-video Bagian 1 Era Efisiensi setelah video bernarasi)
 3. Buka **Authentication > Providers > Email** lalu (untuk prototipe) matikan
    "Confirm email" supaya bisa langsung masuk setelah daftar.
 
@@ -97,6 +99,25 @@ Empat penopang backend yang dipasang di `05_dashboard.sql`:
 - **Rekomendasi HC AI (tahap aturan).** Mengusulkan modul yang menutup kesenjangan terbesar terhadap
   standar peran, mengabaikan modul yang sudah selesai. Kolom embedding `pgvector` sudah ada untuk
   versi Netflix-style penuh menyusul.
+
+## Menambah Kursus OD (paket lanjutan, 5 bagian + narasi)
+
+File `06_more_od_courses.sql` menambah empat kursus Organization Design, masing-masing kini berformat
+lima bagian berurutan persis seperti kursus Era Efisiensi: lima video bagian yang diselingi kuis per
+bagian, ditutup materi PDF, plus Tes Lewati. Semua video sudah bernarasi suara berbahasa Indonesia.
+Skrip ini idempoten, artinya aman dijalankan ulang karena akan mereset isi keempat kursus lalu mengisi
+ulang. File `07_video_timing.sql` menggeser titik pertanyaan-dalam-video Bagian 1 kursus Era Efisiensi
+agar pas dengan video yang sudah bernarasi.
+
+Mengaktifkan semuanya di aplikasi yang sudah online, tanpa perlu deploy ulang Vercel:
+1. Jalankan `06_more_od_courses.sql` lalu `07_video_timing.sql` di Supabase SQL Editor.
+2. Unggah seluruh isi folder `public` ke Storage bucket `course-media`, ke dalam folder `public`
+   (timpa bila diminta). Mencakup video bernarasi kursus pertama `part-1.mp4` sampai `part-5.mp4`,
+   dua puluh video bagian kursus baru `ops-model-1.mp4` sampai `human-ai-5.mp4`, serta empat PDF
+   `ops-model.pdf`, `star-model.pdf`, `workload.pdf`, dan `human-ai.pdf`.
+
+Setelah itu, segarkan aplikasi. Lima kursus tampil di katalog, semua video bersuara, dan kursus baru
+berjalan bertahap dengan kuis di tiap bagian.
 
 ## 4. Deploy ke Vercel
 

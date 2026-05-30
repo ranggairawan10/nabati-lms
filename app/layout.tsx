@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Fraunces, Hanken_Grotesk } from "next/font/google";
+import { Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 
-const display = Fraunces({
+const display = Source_Sans_3({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["600", "700"],
   variable: "--font-display",
 });
-const body = Hanken_Grotesk({
+const body = Source_Sans_3({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-body",
 });
 
