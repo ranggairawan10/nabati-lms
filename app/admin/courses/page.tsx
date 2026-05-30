@@ -3,16 +3,18 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useLang } from "@/lib/i18n";
 
 type Course = { id: string; title: string; status: string; requirement_type: string; level: string | null };
 
-const REQ_LABEL: Record<string, string> = { mandatory: "Wajib", role_based: "Berbasis Peran", elective: "Bebas" };
+const REQ_KEY: Record<string, string> = { mandatory: "a_req_mandatory", role_based: "a_req_role", elective: "a_req_elective" };
 const REQ_STYLE: Record<string, string> = {
   mandatory: "bg-ember/10 text-emberdark", role_based: "bg-moss/10 text-moss", elective: "bg-ink/5 text-ink/60",
 };
 
 export default function AdminCourses() {
   const supabase = createClient();
+  const { t } = useLang();
   const [courses, setCourses] = useState<Course[]>([]);
   const [title, setTitle] = useState("");
   const [req, setReq] = useState("elective");
@@ -35,26 +37,26 @@ export default function AdminCourses() {
 
   return (
     <div>
-      <div className="label">Modul / Kursus</div>
-      <h1 className="mt-1 font-display text-3xl">Modul Training</h1>
-      <p className="mt-2 text-ink/60">Hasil dari analisa kebutuhan. Tandai wajib, berbasis peran, atau bebas.</p>
+      <div className="label">{t("a_nav_courses")}</div>
+      <h1 className="mt-1 font-display text-3xl">{t("a_courses_h")}</h1>
+      <p className="mt-2 text-ink/60">{t("a_courses_sub")}</p>
 
       <div className="mt-6 card p-5">
-        <div className="label mb-3">Buat modul baru</div>
+        <div className="label mb-3">{t("a_create_module")}</div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <input className="input sm:col-span-2" placeholder="Judul modul" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <input className="input sm:col-span-2" placeholder={t("a_ph_module_title")} value={title} onChange={(e) => setTitle(e.target.value)} />
           <select className="input" value={req} onChange={(e) => setReq(e.target.value)}>
-            <option value="mandatory">Wajib (mandatory)</option>
-            <option value="role_based">Berbasis peran (skill matrix)</option>
-            <option value="elective">Bebas (elective)</option>
+            <option value="mandatory">{t("a_opt_mandatory")}</option>
+            <option value="role_based">{t("a_opt_role")}</option>
+            <option value="elective">{t("a_opt_elective")}</option>
           </select>
           <select className="input" value={level} onChange={(e) => setLevel(e.target.value)}>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
+            <option value="beginner">{t("lvl_beginner")}</option>
+            <option value="intermediate">{t("lvl_intermediate")}</option>
+            <option value="advanced">{t("lvl_advanced")}</option>
           </select>
         </div>
-        <button className="btn-primary mt-4" onClick={add}>Buat modul</button>
+        <button className="btn-primary mt-4" onClick={add}>{t("a_btn_create_module")}</button>
       </div>
 
       <div className="mt-8 space-y-2">
@@ -65,7 +67,7 @@ export default function AdminCourses() {
               <div className="font-medium">{c.title}</div>
               <div className="mt-0.5 text-xs text-ink/45">{c.level} · {c.status}</div>
             </div>
-            <span className={`badge ${REQ_STYLE[c.requirement_type]}`}>{REQ_LABEL[c.requirement_type]}</span>
+            <span className={`badge ${REQ_STYLE[c.requirement_type]}`}>{t(REQ_KEY[c.requirement_type])}</span>
           </Link>
         ))}
       </div>

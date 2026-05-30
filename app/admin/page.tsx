@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useLang } from "@/lib/i18n";
 
 export default function AdminHome() {
   const supabase = createClient();
+  const { t } = useLang();
   const [c, setC] = useState({ comp: 0, roles: 0, courses: 0, paths: 0 });
 
   useEffect(() => {
     (async () => {
-      const q = (t: string) => supabase.from(t).select("*", { count: "exact", head: true });
+      const q = (tbl: string) => supabase.from(tbl).select("*", { count: "exact", head: true });
       const [comp, roles, courses, paths] = await Promise.all([
         q("competencies"), q("job_roles"), q("courses"), q("learning_paths"),
       ]);
@@ -20,31 +22,29 @@ export default function AdminHome() {
 
   return (
     <div>
-      <div className="label">Panel Admin</div>
-      <h1 className="mt-1 font-display text-3xl">Penyiapan Pembelajaran</h1>
+      <div className="label">{t("a_brand")}</div>
+      <h1 className="mt-1 font-display text-3xl">{t("a_home_h")}</h1>
 
       <div className="mt-6 card p-5">
-        <div className="label mb-3">Alur TNA</div>
+        <div className="label mb-3">{t("a_tna_flow")}</div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="badge bg-ember/10 text-emberdark">1. Kompetensi</span>
+          <span className="badge bg-ember/10 text-emberdark">{t("a_tna_1")}</span>
           <span className="text-ink/30">&rarr;</span>
-          <span className="badge bg-ember/10 text-emberdark">2. Analisa Kebutuhan (skill matrix)</span>
+          <span className="badge bg-ember/10 text-emberdark">{t("a_tna_2")}</span>
           <span className="text-ink/30">&rarr;</span>
-          <span className="badge bg-moss/10 text-moss">3. Modul Training</span>
+          <span className="badge bg-moss/10 text-moss">{t("a_tna_3")}</span>
         </div>
-        <p className="mt-3 text-sm text-ink/60">
-          Mulai dari menyusun kamus kompetensi, petakan ke peran lewat skill matrix, lalu bangun modul yang menutup kesenjangan.
-        </p>
+        <p className="mt-3 text-sm text-ink/60">{t("a_home_sub")}</p>
       </div>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { n: c.comp, l: "Kompetensi", h: "/admin/competencies" },
-          { n: c.roles, l: "Peran", h: "/admin/roles" },
-          { n: c.courses, l: "Modul/Kursus", h: "/admin/courses" },
-          { n: c.paths, l: "Learning Path", h: "/admin/paths" },
+          { n: c.comp, l: t("a_stat_comp"), h: "/admin/competencies" },
+          { n: c.roles, l: t("a_stat_roles"), h: "/admin/roles" },
+          { n: c.courses, l: t("a_stat_courses"), h: "/admin/courses" },
+          { n: c.paths, l: t("a_stat_paths"), h: "/admin/paths" },
         ].map((x) => (
-          <Link key={x.l} href={x.h} className="card p-5 transition hover:-translate-y-0.5 hover:shadow">
+          <Link key={x.h} href={x.h} className="card p-5 transition hover:-translate-y-0.5 hover:shadow">
             <div className="font-display text-4xl">{x.n}</div>
             <div className="mt-1 text-sm text-ink/60">{x.l}</div>
           </Link>

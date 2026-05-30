@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useLang } from "@/lib/i18n";
 
 type Path = { id: string; title: string; path_type: string };
 type Course = { id: string; title: string };
@@ -9,6 +10,7 @@ type Item = { id: string; course_id: string; position: number; is_required: bool
 
 export default function PathsPage() {
   const supabase = createClient();
+  const { t } = useLang();
   const [paths, setPaths] = useState<Path[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [active, setActive] = useState<Path | null>(null);
@@ -51,21 +53,21 @@ export default function PathsPage() {
 
   return (
     <div>
-      <div className="label">Learning Path</div>
-      <h1 className="mt-1 font-display text-3xl">Jalur Belajar</h1>
-      <p className="mt-2 text-ink/60">Rangkai beberapa modul menjadi satu jalur belajar berurutan.</p>
+      <div className="label">{t("a_nav_paths")}</div>
+      <h1 className="mt-1 font-display text-3xl">{t("a_paths_h")}</h1>
+      <p className="mt-2 text-ink/60">{t("a_paths_sub")}</p>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[260px_1fr]">
         <div>
           <div className="card p-4">
-            <div className="label mb-2">Buat jalur</div>
-            <input className="input" placeholder="Judul jalur" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <div className="label mb-2">{t("a_path_create")}</div>
+            <input className="input" placeholder={t("a_ph_path_title")} value={title} onChange={(e) => setTitle(e.target.value)} />
             <select className="input mt-2" value={ptype} onChange={(e) => setPtype(e.target.value)}>
-              <option value="linear">Linear (berurutan)</option>
-              <option value="flexible">Fleksibel</option>
-              <option value="adaptive">Adaptif</option>
+              <option value="linear">{t("a_opt_linear")}</option>
+              <option value="flexible">{t("a_opt_flexible")}</option>
+              <option value="adaptive">{t("a_opt_adaptive")}</option>
             </select>
-            <button className="btn-primary mt-3 w-full" onClick={createPath}>Buat</button>
+            <button className="btn-primary mt-3 w-full" onClick={createPath}>{t("a_btn_create")}</button>
           </div>
           <ul className="mt-4 space-y-1">
             {paths.map((p) => (
@@ -81,7 +83,7 @@ export default function PathsPage() {
 
         <div>
           {!active ? (
-            <p className="text-ink/50">Pilih jalur untuk menyusun modulnya.</p>
+            <p className="text-ink/50">{t("a_path_pick")}</p>
           ) : (
             <div className="card p-5">
               <div className="font-display text-xl">{active.title}</div>
@@ -92,14 +94,14 @@ export default function PathsPage() {
                     {courseName(it.course_id)}
                   </li>
                 ))}
-                {items.length === 0 && <p className="text-sm text-ink/40">Belum ada modul.</p>}
+                {items.length === 0 && <p className="text-sm text-ink/40">{t("a_no_modules")}</p>}
               </ol>
               <div className="mt-4 flex gap-2">
                 <select className="input flex-1" value={addCourse} onChange={(e) => setAddCourse(e.target.value)}>
-                  <option value="">Tambah modul ke jalur...</option>
+                  <option value="">{t("a_ph_add_module_path")}</option>
                   {courses.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
                 </select>
-                <button className="btn-primary" onClick={addItem}>Tambah</button>
+                <button className="btn-primary" onClick={addItem}>{t("a_btn_add")}</button>
               </div>
             </div>
           )}

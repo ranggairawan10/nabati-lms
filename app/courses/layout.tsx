@@ -37,7 +37,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-20 border-b border-line bg-paper/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3.5 sm:px-8">
+        <div className="mx-auto flex max-w-[1760px] items-center justify-between gap-3 px-5 py-3.5 sm:px-8 lg:px-12">
           <Link href="/courses/dashboard" className="flex items-center gap-2.5">
             {logoOk ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -68,7 +68,7 @@ function Shell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-5 pb-28 pt-7 sm:px-8 sm:pb-12 sm:pt-9">{children}</main>
+      <main className="mx-auto max-w-[1760px] px-5 pb-28 pt-7 sm:px-8 sm:pb-12 sm:pt-9 lg:px-12">{children}</main>
 
       <nav className="fixed inset-x-0 bottom-0 z-20 flex justify-around border-t border-line bg-paper/90 px-2 pb-3 pt-2 backdrop-blur-md md:hidden">
         {TABS.map((tab) => (
