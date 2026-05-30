@@ -20,6 +20,7 @@ export default function RolesPage() {
   const [rDesc, setRDesc] = useState("");
   const [selComp, setSelComp] = useState("");
   const [selLevel, setSelLevel] = useState(3);
+  const [q, setQ] = useState("");
 
   const loadRoles = useCallback(async () => {
     const { data } = await supabase.from("job_roles").select("id, name, description").order("name");
@@ -74,8 +75,13 @@ export default function RolesPage() {
             <input className="input mt-2" placeholder={t("a_ph_desc")} value={rDesc} onChange={(e) => setRDesc(e.target.value)} />
             <button className="btn-primary mt-3 w-full" onClick={addRole}>{t("a_btn_add")}</button>
           </div>
-          <ul className="mt-4 space-y-1">
-            {roles.map((r) => (
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9a9088" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4-4" /></svg>
+            <input className="flex-1 bg-transparent text-sm outline-none" placeholder={t("a_search_role")} value={q} onChange={(e) => setQ(e.target.value)} />
+          </div>
+          <div className="mt-2 text-xs text-ink/45">{roles.filter((r) => r.name.toLowerCase().includes(q.trim().toLowerCase())).length} {t("a_role_count")}</div>
+          <ul className="mt-2 max-h-[60vh] space-y-1 overflow-y-auto pr-1">
+            {roles.filter((r) => r.name.toLowerCase().includes(q.trim().toLowerCase())).map((r) => (
               <li key={r.id}>
                 <button onClick={() => pick(r)}
                   className={`w-full rounded-xl px-3 py-2 text-left text-sm transition ${active?.id === r.id ? "bg-ink text-white" : "hover:bg-sand"}`}>
@@ -83,6 +89,9 @@ export default function RolesPage() {
                 </button>
               </li>
             ))}
+            {roles.filter((r) => r.name.toLowerCase().includes(q.trim().toLowerCase())).length === 0 && (
+              <li className="px-3 py-2 text-sm text-ink/40">{t("a_no_role_match")}</li>
+            )}
           </ul>
         </div>
 
