@@ -5,7 +5,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import CourseThumb from "@/components/CourseThumb";
 import { useLang } from "@/lib/i18n";
-import { TOPIC } from "@/lib/assets";
 
 type Course = {
   id: string;
@@ -15,43 +14,6 @@ type Course = {
   category: string | null;
   duration_minutes: number | null;
 };
-
-function FloatTile({ grad, className }: { grad: string; className: string }) {
-  return (
-    <div className={`absolute overflow-hidden rounded-2xl bg-surface shadow-lift ring-1 ring-line ${className}`}>
-      <div className="relative h-2/3" style={{ backgroundImage: grad }}>
-        <div className="thumb-pat" />
-      </div>
-      <div className="space-y-2 p-3">
-        <div className="h-2 w-3/4 rounded bg-sand" />
-        <div className="h-2 w-1/2 rounded bg-sand" />
-      </div>
-    </div>
-  );
-}
-
-function HeroArt() {
-  const [hasImg, setHasImg] = useState(true);
-  return (
-    <div className="relative hidden h-72 lg:block">
-      {hasImg ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src="/assets/hero/hero-main.png"
-          alt=""
-          onError={() => setHasImg(false)}
-          className="absolute inset-0 h-full w-full object-contain object-right"
-        />
-      ) : (
-        <>
-          <FloatTile grad={TOPIC.amber} className="right-2 top-1 h-48 w-64 rotate-6" />
-          <FloatTile grad={TOPIC.moss} className="right-28 top-12 h-48 w-60 -rotate-3" />
-          <FloatTile grad={TOPIC.ember} className="right-52 top-24 h-44 w-56 rotate-2" />
-        </>
-      )}
-    </div>
-  );
-}
 
 export default function CoursesPage() {
   const supabase = createClient();
@@ -85,15 +47,15 @@ export default function CoursesPage() {
       {/* ===== hero ===== */}
       <section className="relative overflow-hidden rounded-[26px] border border-line bg-surface shadow-soft">
         <div className="hero-glow" />
-        <div className="relative grid items-center gap-8 px-6 py-9 sm:px-10 sm:py-12 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="max-w-xl">
+        <div className="relative px-6 py-12 sm:px-12 sm:py-16 lg:py-20">
+          <div className="max-w-3xl">
             <span className="label">{t("hero_kicker")}</span>
-            <h1 className="mt-3 font-display text-[30px] font-semibold leading-[1.06] tracking-tight sm:text-5xl">
+            <h1 className="mt-4 font-display text-[34px] font-semibold leading-[1.04] tracking-tight sm:text-6xl">
               {t("hero_pre")}<span className="text-ember">{t("hero_accent")}</span>{t("hero_suf")}
             </h1>
-            <p className="mt-4 max-w-xl text-[15px] text-ink-soft">{t("hero_sub")}</p>
+            <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-ink-soft sm:text-base">{t("hero_sub")}</p>
 
-            <div className="mt-6 flex max-w-md items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-2.5 shadow-soft">
+            <div className="mt-7 flex max-w-xl items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 shadow-soft">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a9088" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4-4" /></svg>
               <input
                 value={q}
@@ -103,16 +65,12 @@ export default function CoursesPage() {
               />
             </div>
 
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-6 flex flex-wrap gap-2">
               <span className="chip"><b className="font-display text-[15px]">{courses.length}</b> {t("stat_courses")}</span>
               <span className="chip"><b className="font-display text-[15px]">25</b> {t("stat_videos")}</span>
               <span className="chip">{t("stat_target").replace("{n}", "50")}</span>
             </div>
           </div>
-
-          {/* dekorasi kanan: kartu mengambang, mengisi ruang di layar lebar */}
-          {/* dekorasi kanan: pakai ilustrasi hero bila tersedia, jika tidak fallback ke kartu */}
-          <HeroArt />
         </div>
       </section>
 

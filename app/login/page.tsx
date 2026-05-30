@@ -4,22 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-function LoginArt() {
-  const [hasImg, setHasImg] = useState(true);
-  if (!hasImg) return <div className="flex-1" />;
-  return (
-    <div className="relative flex-1">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/assets/spot/login-art.png"
-        alt=""
-        onError={() => setHasImg(false)}
-        className="absolute inset-0 h-full w-full object-contain object-center"
-      />
-    </div>
-  );
-}
-
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -54,18 +38,48 @@ export default function LoginPage() {
 
   return (
     <main className="grid min-h-screen lg:grid-cols-2">
-      <section className="hidden flex-col justify-between bg-ink p-12 text-paper lg:flex">
-        <div className="label text-paper/60">ONE GLOBAL HCMS</div>
-        <div>
-          <h1 className="font-display text-5xl leading-tight">
-            Belajar.<br />Bertumbuh.<br />Bersama Nabati.
+      <section className="relative hidden flex-col justify-between overflow-hidden bg-ink p-12 text-paper lg:flex">
+        {/* atmosfer murni CSS: kilau lembut + grid titik tipis */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div
+            className="absolute -left-20 top-1/4 h-[28rem] w-[28rem] rounded-full opacity-60"
+            style={{ background: "radial-gradient(circle, rgba(226,35,26,.22), transparent 70%)" }}
+          />
+          <div
+            className="absolute bottom-0 right-0 h-80 w-80 rounded-full opacity-50"
+            style={{ background: "radial-gradient(circle, rgba(232,146,12,.16), transparent 70%)" }}
+          />
+          <div
+            className="absolute inset-0 opacity-[0.5]"
+            style={{ backgroundImage: "radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px)", backgroundSize: "24px 24px" }}
+          />
+        </div>
+
+        <div className="relative label text-paper/55">ONE GLOBAL HCMS</div>
+
+        <div className="relative">
+          <h1 className="font-display text-6xl font-semibold leading-[1.02] tracking-tight">
+            Belajar.<br />Bertumbuh.<br />Bersama <span className="text-ember">Nabati</span>.
           </h1>
-          <p className="mt-6 max-w-sm text-paper/70">
+          <p className="mt-6 max-w-sm text-paper/65">
             Modul pembelajaran terpadu di dalam sistem human capital Anda.
           </p>
+
+          <div className="mt-10 max-w-sm space-y-3 border-t border-white/10 pt-8">
+            {[
+              "Video bernarasi dan kuis interaktif",
+              "Jejak kompetensi yang terukur",
+              "Selaras dengan kerangka kompetensi KSNI",
+            ].map((line) => (
+              <div key={line} className="flex items-center gap-3 text-sm text-paper/70">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ember" />
+                {line}
+              </div>
+            ))}
+          </div>
         </div>
-        <LoginArt />
-        <div className="text-sm text-paper/40">Prototipe LMS</div>
+
+        <div className="relative text-sm text-paper/40">Prototipe LMS</div>
       </section>
 
       <section className="flex items-center justify-center p-8">
