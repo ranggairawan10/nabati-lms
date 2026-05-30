@@ -30,6 +30,29 @@ function FloatTile({ grad, className }: { grad: string; className: string }) {
   );
 }
 
+function HeroArt() {
+  const [hasImg, setHasImg] = useState(true);
+  return (
+    <div className="relative hidden h-72 lg:block">
+      {hasImg ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src="/assets/hero/hero-main.png"
+          alt=""
+          onError={() => setHasImg(false)}
+          className="absolute inset-0 h-full w-full object-contain object-right"
+        />
+      ) : (
+        <>
+          <FloatTile grad={TOPIC.amber} className="right-2 top-1 h-48 w-64 rotate-6" />
+          <FloatTile grad={TOPIC.moss} className="right-28 top-12 h-48 w-60 -rotate-3" />
+          <FloatTile grad={TOPIC.ember} className="right-52 top-24 h-44 w-56 rotate-2" />
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function CoursesPage() {
   const supabase = createClient();
   const { t } = useLang();
@@ -88,11 +111,8 @@ export default function CoursesPage() {
           </div>
 
           {/* dekorasi kanan: kartu mengambang, mengisi ruang di layar lebar */}
-          <div className="relative hidden h-72 lg:block">
-            <FloatTile grad={TOPIC.amber} className="right-2 top-1 h-48 w-64 rotate-6" />
-            <FloatTile grad={TOPIC.moss} className="right-28 top-12 h-48 w-60 -rotate-3" />
-            <FloatTile grad={TOPIC.ember} className="right-52 top-24 h-44 w-56 rotate-2" />
-          </div>
+          {/* dekorasi kanan: pakai ilustrasi hero bila tersedia, jika tidak fallback ke kartu */}
+          <HeroArt />
         </div>
       </section>
 

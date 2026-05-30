@@ -4,6 +4,22 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+function LoginArt() {
+  const [hasImg, setHasImg] = useState(true);
+  if (!hasImg) return <div className="flex-1" />;
+  return (
+    <div className="relative flex-1">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/assets/spot/login-art.png"
+        alt=""
+        onError={() => setHasImg(false)}
+        className="absolute inset-0 h-full w-full object-contain object-center"
+      />
+    </div>
+  );
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -48,6 +64,7 @@ export default function LoginPage() {
             Modul pembelajaran terpadu di dalam sistem human capital Anda.
           </p>
         </div>
+        <LoginArt />
         <div className="text-sm text-paper/40">Prototipe LMS</div>
       </section>
 
@@ -61,21 +78,21 @@ export default function LoginPage() {
           <div className="mt-8 space-y-4">
             {mode === "signup" && (
               <input
-                className="w-full rounded-xl border border-sand bg-white px-4 py-3"
+                className="w-full rounded-xl border border-line bg-white px-4 py-3 outline-none transition focus:border-ember focus:ring-2 focus:ring-ember/20"
                 placeholder="Nama lengkap"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             )}
             <input
-              className="w-full rounded-xl border border-sand bg-white px-4 py-3"
+              className="w-full rounded-xl border border-line bg-white px-4 py-3 outline-none transition focus:border-ember focus:ring-2 focus:ring-ember/20"
               placeholder="Email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
-              className="w-full rounded-xl border border-sand bg-white px-4 py-3"
+              className="w-full rounded-xl border border-line bg-white px-4 py-3 outline-none transition focus:border-ember focus:ring-2 focus:ring-ember/20"
               placeholder="Kata sandi"
               type="password"
               value={password}
