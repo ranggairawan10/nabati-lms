@@ -16,11 +16,11 @@ export type Visual = { gradient: string; glyph: Glyph; thumb: string };
 
 // Pemetaan kursus yang sudah dikenal (ID dari seed Organization Design)
 const MAP: Record<string, Visual> = {
-  "1d000000-0000-0000-0000-000000000001": { gradient: TOPIC.ember, glyph: "org", thumb: "/assets/thumbs/od-efisiensi.png" },
-  "1d000000-0000-0000-0000-000000000002": { gradient: TOPIC.moss, glyph: "grid", thumb: "/assets/thumbs/model-operasi.png" },
-  "1d000000-0000-0000-0000-000000000003": { gradient: TOPIC.amber, glyph: "star", thumb: "/assets/thumbs/star-model.png" },
-  "1d000000-0000-0000-0000-000000000004": { gradient: TOPIC.indigo, glyph: "bars", thumb: "/assets/thumbs/beban-kerja.png" },
-  "1d000000-0000-0000-0000-000000000005": { gradient: TOPIC.violet, glyph: "people", thumb: "/assets/thumbs/manusia-ai.png" },
+  "1d000000-0000-0000-0000-000000000001": { gradient: TOPIC.ember, glyph: "org", thumb: "/assets/thumbs/od-efisiensi.jpg" },
+  "1d000000-0000-0000-0000-000000000002": { gradient: TOPIC.moss, glyph: "grid", thumb: "/assets/thumbs/model-operasi.jpg" },
+  "1d000000-0000-0000-0000-000000000003": { gradient: TOPIC.amber, glyph: "star", thumb: "/assets/thumbs/star-model.jpg" },
+  "1d000000-0000-0000-0000-000000000004": { gradient: TOPIC.indigo, glyph: "bars", thumb: "/assets/thumbs/beban-kerja.jpg" },
+  "1d000000-0000-0000-0000-000000000005": { gradient: TOPIC.violet, glyph: "people", thumb: "/assets/thumbs/manusia-ai.jpg" },
 };
 
 const POOL = [TOPIC.ember, TOPIC.moss, TOPIC.amber, TOPIC.indigo, TOPIC.violet];
@@ -37,5 +37,5 @@ export function courseVisual(c: { id: string; title: string }): Visual {
   const h = hash(c.title || c.id);
   // slug sederhana untuk slot thumbnail opsional
   const slug = (c.title || "kursus").toLowerCase().normalize("NFKD").replace(/[^\w]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
-  return { gradient: POOL[h % POOL.length], glyph: GLYPHS[h % GLYPHS.length], thumb: `/assets/thumbs/${slug}.png` };
+  return { gradient: POOL[h % POOL.length], glyph: GLYPHS[h % GLYPHS.length], thumb: `/assets/thumbs/${slug}.jpg` };
 }

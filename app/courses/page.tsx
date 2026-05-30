@@ -15,6 +15,22 @@ type Course = {
   duration_minutes: number | null;
 };
 
+function HeroPhoto() {
+  const [hasImg, setHasImg] = useState(true);
+  if (!hasImg) return null;
+  return (
+    <div className="relative hidden overflow-hidden rounded-[22px] lg:block">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/assets/hero/hero-main.jpg"
+        alt=""
+        onError={() => setHasImg(false)}
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
+}
+
 export default function CoursesPage() {
   const supabase = createClient();
   const { t } = useLang();
@@ -47,30 +63,34 @@ export default function CoursesPage() {
       {/* ===== hero ===== */}
       <section className="relative overflow-hidden rounded-[26px] border border-line bg-surface shadow-soft">
         <div className="hero-glow" />
-        <div className="relative px-6 py-12 sm:px-12 sm:py-16 lg:py-20">
-          <div className="max-w-3xl">
-            <span className="label">{t("hero_kicker")}</span>
-            <h1 className="mt-4 font-display text-[34px] font-semibold leading-[1.04] tracking-tight sm:text-6xl">
-              {t("hero_pre")}<span className="text-ember">{t("hero_accent")}</span>{t("hero_suf")}
-            </h1>
-            <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-ink-soft sm:text-base">{t("hero_sub")}</p>
+        <div className="relative grid items-stretch gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="px-6 py-12 sm:px-12 sm:py-16 lg:py-20">
+            <div className="max-w-2xl">
+              <span className="label">{t("hero_kicker")}</span>
+              <h1 className="mt-4 font-display text-[34px] font-semibold leading-[1.04] tracking-tight sm:text-6xl">
+                {t("hero_pre")}<span className="text-ember">{t("hero_accent")}</span>{t("hero_suf")}
+              </h1>
+              <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-ink-soft sm:text-base">{t("hero_sub")}</p>
 
-            <div className="mt-7 flex max-w-xl items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 shadow-soft">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a9088" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4-4" /></svg>
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder={t("search_ph")}
-                className="flex-1 bg-transparent text-sm outline-none placeholder:text-ink-soft/70"
-              />
-            </div>
+              <div className="mt-7 flex max-w-xl items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 shadow-soft">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a9088" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4-4" /></svg>
+                <input
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder={t("search_ph")}
+                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-ink-soft/70"
+                />
+              </div>
 
-            <div className="mt-6 flex flex-wrap gap-2">
-              <span className="chip"><b className="font-display text-[15px]">{courses.length}</b> {t("stat_courses")}</span>
-              <span className="chip"><b className="font-display text-[15px]">25</b> {t("stat_videos")}</span>
-              <span className="chip">{t("stat_target").replace("{n}", "50")}</span>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <span className="chip"><b className="font-display text-[15px]">{courses.length}</b> {t("stat_courses")}</span>
+                <span className="chip"><b className="font-display text-[15px]">25</b> {t("stat_videos")}</span>
+                <span className="chip">{t("stat_target").replace("{n}", "50")}</span>
+              </div>
             </div>
           </div>
+
+          <HeroPhoto />
         </div>
       </section>
 

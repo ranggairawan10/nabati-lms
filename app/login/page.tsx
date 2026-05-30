@@ -4,6 +4,23 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+function LoginPhoto() {
+  const [hasImg, setHasImg] = useState(true);
+  if (!hasImg) return null;
+  return (
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/assets/spot/login-art.jpg"
+        alt=""
+        onError={() => setHasImg(false)}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/30" />
+    </>
+  );
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -39,7 +56,8 @@ export default function LoginPage() {
   return (
     <main className="grid min-h-screen lg:grid-cols-2">
       <section className="relative hidden flex-col justify-between overflow-hidden bg-ink p-12 text-paper lg:flex">
-        {/* atmosfer murni CSS: kilau lembut + grid titik tipis */}
+        <LoginPhoto />
+        {/* atmosfer murni CSS: kilau lembut + grid titik tipis (tampil bila tanpa foto) */}
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div
             className="absolute -left-20 top-1/4 h-[28rem] w-[28rem] rounded-full opacity-60"
