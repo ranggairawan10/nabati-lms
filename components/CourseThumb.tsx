@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { courseVisual, type Glyph } from "@/lib/assets";
 
 const PATHS: Record<Glyph, React.ReactNode> = {
@@ -22,19 +23,29 @@ export default function CourseThumb({
   className?: string;
 }) {
   const v = courseVisual(course);
-  const [hasImg, setHasImg] = useState(true);
+  const supabase = createClient();
+  const [url, setUrl] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      if (!v.thumb) return;
+      // Coba ambil gambar dari Supabase Storage (bucket course-media).
+      const { data, error } = await supabase.storage.from("course-media").createSignedUrl(v.thumb, 3600);
+      if (active && !error && data?.signedUrl) setUrl(data.signedUrl);
+    })();
+    return () => { active = false; };
+  }, [v.thumb, supabase]);
+
+  const showImg = url && !failed;
 
   return (
     <div className={`thumb ${className}`} style={{ backgroundImage: v.gradient }}>
       <div className="thumb-pat" />
-      {hasImg && (
+      {showImg && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={v.thumb}
-          alt=""
-          className="thumb-img"
-          onError={() => setHasImg(false)}
-        />
+        <img src={url} alt="" className="thumb-img" onError={() => setFailed(true)} />
       )}
       <svg className="thumb-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         {PATHS[v.glyph]}

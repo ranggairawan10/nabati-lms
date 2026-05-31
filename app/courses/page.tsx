@@ -16,17 +16,22 @@ type Course = {
 };
 
 function HeroPhoto() {
-  const [hasImg, setHasImg] = useState(true);
-  if (!hasImg) return null;
+  const supabase = createClient();
+  const [url, setUrl] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const { data, error } = await supabase.storage.from("course-media").createSignedUrl("ui/hero-main.jpg", 3600);
+      if (active && !error && data?.signedUrl) setUrl(data.signedUrl);
+    })();
+    return () => { active = false; };
+  }, [supabase]);
+  if (!url || failed) return null;
   return (
     <div className="relative hidden overflow-hidden rounded-[22px] lg:block">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/assets/hero/hero-main.jpg"
-        alt=""
-        onError={() => setHasImg(false)}
-        className="h-full w-full object-cover"
-      />
+      <img src={url} alt="" onError={() => setFailed(true)} className="h-full w-full object-cover" />
     </div>
   );
 }
