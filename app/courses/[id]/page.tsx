@@ -14,7 +14,7 @@ type Lesson = {
   storage_path: string | null; content_url: string | null; body: string | null; position: number;
 };
 type Module = { id: string; title: string; position: number };
-type Course = { title: string; sequential: boolean; placement_assessment_id: string | null };
+type Course = { title: string; sequential: boolean; placement_assessment_id: string | null; posttest_assessment_id: string | null };
 
 const ICON: Record<string, string> = { video: "▶", pdf: "▦", quiz: "✎", link: "↗", text: "¶" };
 
@@ -50,6 +50,7 @@ export default function CoursePage({ params }: { params: { id: string } }) {
   const [passed, setPassed] = useState<Set<string>>(new Set());
   const [active, setActive] = useState<Lesson | null>(null);
   const [showPlacement, setShowPlacement] = useState(false);
+  const [showPost, setShowPost] = useState(false);
 
   const loadStatus = useCallback(async (pid: string, lessonIds: string[]) => {
     if (lessonIds.length === 0) return;
@@ -70,7 +71,7 @@ export default function CoursePage({ params }: { params: { id: string } }) {
       setProfileId(pid);
 
       const { data: c } = await supabase.from("courses")
-        .select("title, sequential, placement_assessment_id").eq("id", params.id).maybeSingle();
+        .select("title, sequential, placement_assessment_id, posttest_assessment_id").eq("id", params.id).maybeSingle();
       setCourse(c as Course);
 
       await supabase.from("enrollments").upsert(
@@ -137,6 +138,8 @@ export default function CoursePage({ params }: { params: { id: string } }) {
   const total = lessons.length;
   const done = lessons.filter(isDone).length;
   const pct = total ? Math.round((done / total) * 100) : 0;
+  const allLessonsDone = total > 0 && done >= total;
+  const postPassed = !!course?.posttest_assessment_id && passed.has(course.posttest_assessment_id);
   const visual = courseVisual({ id: params.id, title: course?.title ?? "" });
 
   return (
@@ -169,8 +172,26 @@ export default function CoursePage({ params }: { params: { id: string } }) {
                 {t("placement_q_pre")}<b className="text-ink">{t("placement_name")}</b>{t("placement_q_suf")}
               </p>
               <button className="btn-ghost shrink-0"
-                onClick={() => { setShowPlacement(true); setActive(null); }}>
+                onClick={() => { setShowPlacement(true); setShowPost(false); setActive(null); }}>
                 {t("placement_try")}
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
+      {course?.posttest_assessment_id && allLessonsDone && (
+        <div className="mt-4 card flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-indigo p-4">
+          {postPassed ? (
+            <p className="text-sm font-medium text-moss">Post-Test selesai. Hasil belajar Anda sudah terekam.</p>
+          ) : (
+            <>
+              <p className="text-sm text-ink-soft">
+                Semua sesi selesai. Kerjakan <b className="text-ink">Post-Test</b> untuk mengukur hasil belajar Anda.
+              </p>
+              <button className="btn-primary shrink-0"
+                onClick={() => { setShowPost(true); setShowPlacement(false); setActive(null); }}>
+                Mulai Post-Test
               </button>
             </>
           )}
@@ -219,7 +240,12 @@ export default function CoursePage({ params }: { params: { id: string } }) {
 
         <section className="min-w-0">
           <div className="mx-auto max-w-[1040px]">
-            {showPlacement && course?.placement_assessment_id ? (
+            {showPost && course?.posttest_assessment_id ? (
+              <>
+                <h2 className="mb-4 font-display text-2xl font-semibold">Post-Test</h2>
+                <Quiz assessmentId={course.posttest_assessment_id} onComplete={refresh} />
+              </>
+            ) : showPlacement && course?.placement_assessment_id ? (
               <>
                 <h2 className="mb-4 font-display text-2xl font-semibold">{t("placement_name")}</h2>
                 <Quiz assessmentId={course.placement_assessment_id} onComplete={refresh} />
