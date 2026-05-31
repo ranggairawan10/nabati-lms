@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import VideoPlayer from "@/components/VideoPlayer";
@@ -46,6 +46,7 @@ export default function CoursePage({ params }: { params: { id: string } }) {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [asmtByLesson, setAsmtByLesson] = useState<Record<string, string>>({});
   const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const [tested, setTested] = useState<Set<string>>(new Set());
   const [passed, setPassed] = useState<Set<string>>(new Set());
   const [active, setActive] = useState<Lesson | null>(null);
   const [showPlacement, setShowPlacement] = useState(false);
@@ -57,6 +58,7 @@ export default function CoursePage({ params }: { params: { id: string } }) {
       supabase.from("assessment_attempts").select("assessment_id, passed").eq("profile_id", pid),
     ]);
     setCompleted(new Set((prog ?? []).filter((p) => p.status === "completed").map((p) => p.lesson_id)));
+    setTested(new Set((prog ?? []).filter((p) => p.status === "tested").map((p) => p.lesson_id)));
     setPassed(new Set((att ?? []).filter((a) => a.passed).map((a) => a.assessment_id)));
   }, [supabase]);
 
@@ -82,7 +84,15 @@ export default function CoursePage({ params }: { params: { id: string } }) {
       const { data: less } = modIds.length
         ? await supabase.from("lessons").select("*").in("module_id", modIds).order("position")
         : { data: [] as Lesson[] };
-      const ll = (less ?? []) as Lesson[];
+      // Urutkan pelajaran mengikuti urutan sesi (modul) dulu, baru posisi di dalam sesi.
+      // Tanpa ini, semua "materi" (posisi 0) menumpuk di depan dan urutan sesi kacau.
+      const modOrder: Record<string, number> = {};
+      (mods ?? []).forEach((m, idx) => { modOrder[m.id] = m.position ?? idx; });
+      const ll = ((less ?? []) as Lesson[]).slice().sort((a, b) => {
+        const ma = modOrder[a.module_id] ?? 0, mb = modOrder[b.module_id] ?? 0;
+        if (ma !== mb) return ma - mb;
+        return (a.position ?? 0) - (b.position ?? 0);
+      });
       setLessons(ll);
       setActive(ll[0] ?? null);
 
@@ -102,9 +112,22 @@ export default function CoursePage({ params }: { params: { id: string } }) {
 
   const placementPassed = !!course?.placement_assessment_id && passed.has(course.placement_assessment_id);
 
+  // Saat lulus Tes Lewati: tandai sesi yang belum tuntas sebagai 'tested' (jujur,
+  // tidak menambah jam fiktif). Dipanggil sekali ketika status placementPassed aktif.
+  const testedMarked = useRef(false);
+  useEffect(() => {
+    if (placementPassed && profileId && !testedMarked.current) {
+      testedMarked.current = true;
+      (async () => {
+        await supabase.rpc("mark_course_tested", { p_course: params.id });
+        loadStatus(profileId, lessons.map((l) => l.id));
+      })();
+    }
+  }, [placementPassed, profileId, params.id, supabase, lessons, loadStatus]);
+
   function isDone(l: Lesson): boolean {
     if (l.content_type === "quiz") return passed.has(asmtByLesson[l.id]);
-    return completed.has(l.id);
+    return completed.has(l.id) || tested.has(l.id);
   }
   function unlockedAt(i: number): boolean {
     if (!course?.sequential || placementPassed || i === 0) return true;
@@ -179,7 +202,12 @@ export default function CoursePage({ params }: { params: { id: string } }) {
                           {unlocked ? (ICON[l.content_type] ?? "•") : "🔒"}
                         </span>
                         <span className="flex-1 leading-snug">{l.title}</span>
-                        {isDone(l) && <span className={activeNow ? "text-white" : "text-moss"}>✓</span>}
+                        {tested.has(l.id) && l.content_type !== "quiz" && !completed.has(l.id) && (
+                          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${activeNow ? "bg-white/20 text-white" : "bg-amber/15 text-amber"}`}>Teruji</span>
+                        )}
+                        {isDone(l) && !(tested.has(l.id) && !completed.has(l.id) && l.content_type !== "quiz") && (
+                          <span className={activeNow ? "text-white" : "text-moss"}>✓</span>
+                        )}
                       </button>
                     </li>
                   );

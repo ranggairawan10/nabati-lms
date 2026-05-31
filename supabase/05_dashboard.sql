@@ -72,7 +72,7 @@ begin
     into org, v_name, v_goal, v_jobrole from public.profiles where id = me;
   select name into v_rolename from public.job_roles where id = v_jobrole;
 
-  select count(*) into completed_lessons from public.lesson_progress where profile_id = me and status = 'completed';
+  select count(*) into completed_lessons from public.lesson_progress where profile_id = me and status in ('completed','tested');
   select count(distinct assessment_id) into passed_asmt from public.assessment_attempts where profile_id = me and passed;
   select exists(select 1 from public.assessment_attempts where profile_id = me and coalesce(score,0) >= 100) into perfect;
   select coalesce(sum(l.duration_seconds),0)/3600.0 into hours
@@ -98,7 +98,7 @@ begin
 
   select count(*)+1 into rnk from (
     select profile_id, count(*) c from public.lesson_progress
-    where status='completed' and organization_id=org group by profile_id) t where t.c > completed_lessons;
+    where status in ('completed','tested') and organization_id=org group by profile_id) t where t.c > completed_lessons;
   select count(*) into total_learners from public.profiles where organization_id = org;
   rank_label := '#'||rnk||' dari '||greatest(total_learners,1);
 
@@ -110,7 +110,7 @@ begin
         (select count(*) from public.lessons l join public.modules m on m.id=l.module_id where m.course_id=e.course_id) total,
         (select count(*) from public.lesson_progress lp join public.lessons l on l.id=lp.lesson_id
            join public.modules m on m.id=l.module_id
-           where m.course_id=e.course_id and lp.profile_id=me and lp.status='completed') done
+           where m.course_id=e.course_id and lp.profile_id=me and lp.status in ('completed','tested')) done
       from public.enrollments e where e.profile_id=me and e.status <> 'completed'
     ) x join public.courses c on c.id=x.course_id
     where x.done > 0 and x.done < coalesce(x.total,0)
