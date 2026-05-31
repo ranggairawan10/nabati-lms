@@ -51,6 +51,7 @@ export default function CoursePage({ params }: { params: { id: string } }) {
   const [active, setActive] = useState<Lesson | null>(null);
   const [showPlacement, setShowPlacement] = useState(false);
   const [showPost, setShowPost] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const loadStatus = useCallback(async (pid: string, lessonIds: string[]) => {
     if (lessonIds.length === 0) return;
@@ -199,8 +200,8 @@ export default function CoursePage({ params }: { params: { id: string } }) {
       )}
 
       {/* ===== body ===== */}
-      <div className="mt-8 grid gap-8 lg:grid-cols-[340px_minmax(0,1fr)]">
-        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+      <div className={`mt-8 grid gap-8 transition-all ${expanded ? "lg:grid-cols-1" : "lg:grid-cols-[340px_minmax(0,1fr)]"}`}>
+        <aside className={`space-y-6 lg:sticky lg:top-24 lg:self-start ${expanded ? "hidden" : ""}`}>
           {modules.map((m) => (
             <div key={m.id} className="card p-4">
               <div className="label mb-3">{m.title}</div>
@@ -254,7 +255,25 @@ export default function CoursePage({ params }: { params: { id: string } }) {
               <div className="card grid place-items-center px-6 py-20 text-center text-ink-soft">{t("pick_section")}</div>
             ) : (
               <>
-                <h2 className="mb-4 font-display text-2xl font-semibold">{active.title}</h2>
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  <h2 className="font-display text-2xl font-semibold">{active.title}</h2>
+                  <button
+                    onClick={() => setExpanded((v) => !v)}
+                    className="shrink-0 grid h-9 w-9 place-items-center rounded-lg border border-line bg-surface text-ink hover:bg-sand transition"
+                    title={expanded ? "Tampilkan sidebar" : "Perluas layar penuh"}
+                    aria-label={expanded ? "Tampilkan sidebar" : "Perluas layar penuh"}
+                  >
+                    {expanded ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 8V5a2 2 0 0 1 2-2h3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M21 16v3a2 2 0 0 1-2 2h-3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 {profileId && active.content_type === "video" && active.storage_path && (
                   <VideoPlayer lessonId={active.id} storagePath={active.storage_path} profileId={profileId} onComplete={refresh} />
                 )}
