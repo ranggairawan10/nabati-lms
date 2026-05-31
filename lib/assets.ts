@@ -22,6 +22,13 @@ const MAP: Record<string, Visual> = {
   "1d000000-0000-0000-0000-000000000003": { gradient: TOPIC.amber, glyph: "star", thumb: "/assets/thumbs/star-model" },
   "1d000000-0000-0000-0000-000000000004": { gradient: TOPIC.indigo, glyph: "bars", thumb: "/assets/thumbs/beban-kerja" },
   "1d000000-0000-0000-0000-000000000005": { gradient: TOPIC.violet, glyph: "people", thumb: "/assets/thumbs/manusia-ai" },
+  // Learning path Produksi - Manufacture (6 jenjang)
+  "ab895c3f-ba90-5807-b976-878a46911316": { gradient: TOPIC.moss, glyph: "grid", thumb: "/assets/thumbs/produksi-staff" },
+  "3a9eeb95-d590-5915-8322-6a4dfb5c0a9a": { gradient: TOPIC.indigo, glyph: "people", thumb: "/assets/thumbs/produksi-foreman" },
+  "2061905e-68ed-504e-9694-4523c48411c8": { gradient: TOPIC.amber, glyph: "bars", thumb: "/assets/thumbs/produksi-spv" },
+  "f0c9dfe8-e105-589a-8f81-2d6d82c74d11": { gradient: TOPIC.ember, glyph: "star", thumb: "/assets/thumbs/produksi-mgr" },
+  "93669198-ce19-570d-bb09-b84771b7b63c": { gradient: TOPIC.ink, glyph: "org", thumb: "/assets/thumbs/produksi-plant" },
+  "a81a88cd-984d-592a-9225-838db6802f2b": { gradient: TOPIC.violet, glyph: "book", thumb: "/assets/thumbs/produksi-dvp" },
 };
 
 const POOL = [TOPIC.ember, TOPIC.moss, TOPIC.amber, TOPIC.indigo, TOPIC.violet];
