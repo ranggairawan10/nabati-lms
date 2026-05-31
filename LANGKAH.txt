@@ -1,0 +1,22 @@
+PENYEBAB: situs yang online masih memakai kode versi Supabase. File gambar .jpg Anda
+sudah benar (terbaca di /assets/thumbs/...). Yang kurang: deploy kode versi folder-statis.
+
+LANGKAH (timpa 5 file, lib/useImage.ts adalah file BARU):
+  lib/useImage.ts
+  lib/assets.ts
+  components/CourseThumb.tsx
+  app/courses/page.tsx
+  app/login/page.tsx
+
+Jika ada, HAPUS: lib/storage.ts
+
+Lalu di GitHub Desktop:
+  1. Pastikan 5 perubahan di atas MUNCUL di daftar.
+  2. Commit (mis. "Gambar dari folder proyek").
+  3. Push origin.
+  4. Buka vercel.com -> proyek -> tunggu deployment "Ready" (1-2 menit).
+  5. Buka situs, tekan Cmd+Shift+R.
+
+CEK CEPAT setelah deploy: buka
+  https://nabati-lms.vercel.app/assets/thumbs/od-efisiensi.jpg
+Kalau gambarnya tampil (memang sudah), kartu akan ikut tampil begitu kode baru aktif.
