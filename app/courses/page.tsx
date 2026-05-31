@@ -5,7 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import CourseThumb from "@/components/CourseThumb";
 import { useLang } from "@/lib/i18n";
-import { resolveStorageImage } from "@/lib/storage";
+import { useFirstImage } from "@/lib/useImage";
 
 type Course = {
   id: string;
@@ -16,30 +16,10 @@ type Course = {
   duration_minutes: number | null;
 };
 
-function HeroPhoto() {
-  const supabase = createClient();
-  const [url, setUrl] = useState<string | null>(null);
-  const [failed, setFailed] = useState(false);
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      const signed = await resolveStorageImage(supabase, "ui/hero-main");
-      if (active && signed) setUrl(signed);
-    })();
-    return () => { active = false; };
-  }, [supabase]);
-  if (!url || failed) return null;
-  return (
-    <div className="relative hidden overflow-hidden rounded-[22px] lg:block">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={url} alt="" onError={() => setFailed(true)} className="h-full w-full object-cover" />
-    </div>
-  );
-}
-
 export default function CoursesPage() {
   const supabase = createClient();
   const { t } = useLang();
+  const heroUrl = useFirstImage("/assets/hero/hero-main");
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
@@ -69,9 +49,9 @@ export default function CoursesPage() {
       {/* ===== hero ===== */}
       <section className="relative overflow-hidden rounded-[26px] border border-line bg-surface shadow-soft">
         <div className="hero-glow" />
-        <div className="relative grid items-stretch gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className={`relative gap-8 ${heroUrl ? "grid items-stretch lg:grid-cols-[1.15fr_0.85fr]" : ""}`}>
           <div className="px-6 py-12 sm:px-12 sm:py-16 lg:py-20">
-            <div className="max-w-2xl">
+            <div className={heroUrl ? "max-w-2xl" : "max-w-3xl"}>
               <span className="label">{t("hero_kicker")}</span>
               <h1 className="mt-4 font-display text-[34px] font-semibold leading-[1.04] tracking-tight sm:text-6xl">
                 {t("hero_pre")}<span className="text-ember">{t("hero_accent")}</span>{t("hero_suf")}
@@ -96,7 +76,12 @@ export default function CoursesPage() {
             </div>
           </div>
 
-          <HeroPhoto />
+          {heroUrl && (
+            <div className="relative hidden overflow-hidden rounded-[22px] lg:block">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={heroUrl} alt="" className="h-full w-full object-cover" />
+            </div>
+          )}
         </div>
       </section>
 

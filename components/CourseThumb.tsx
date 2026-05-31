@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useState } from "react";
 import { courseVisual, type Glyph } from "@/lib/assets";
-import { resolveStorageImage } from "@/lib/storage";
+
+const EXTS = [".jpg", ".jpeg", ".png", ".webp"];
 
 const PATHS: Record<Glyph, React.ReactNode> = {
   org: (<><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="8.5" y="14" width="7" height="7" rx="1.5" /><path d="M6.5 10v2.5h11V10M12 12.5V14" /></>),
@@ -24,29 +24,16 @@ export default function CourseThumb({
   className?: string;
 }) {
   const v = courseVisual(course);
-  const supabase = createClient();
-  const [url, setUrl] = useState<string | null>(null);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      if (!v.thumb) return;
-      // Ambil gambar dari Storage, ekstensi jpg/png/webp dideteksi otomatis.
-      const signed = await resolveStorageImage(supabase, v.thumb);
-      if (active && signed) setUrl(signed);
-    })();
-    return () => { active = false; };
-  }, [v.thumb, supabase]);
-
-  const showImg = url && !failed;
+  const [i, setI] = useState(0);
+  // Gambar diambil dari folder publik proyek; ekstensi jpg/png/webp dicoba berurutan.
+  const src = v.thumb && i < EXTS.length ? v.thumb + EXTS[i] : null;
 
   return (
     <div className={`thumb ${className}`} style={{ backgroundImage: v.gradient }}>
       <div className="thumb-pat" />
-      {showImg && (
+      {src && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={url} alt="" className="thumb-img" onError={() => setFailed(true)} />
+        <img src={src} alt="" className="thumb-img" onError={() => setI((n) => n + 1)} />
       )}
       <svg className="thumb-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         {PATHS[v.glyph]}

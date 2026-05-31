@@ -1,27 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { resolveStorageImage } from "@/lib/storage";
+import { useFirstImage } from "@/lib/useImage";
 
 function LoginPhoto() {
-  const supabase = createClient();
-  const [url, setUrl] = useState<string | null>(null);
-  const [failed, setFailed] = useState(false);
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      const signed = await resolveStorageImage(supabase, "ui/login-art");
-      if (active && signed) setUrl(signed);
-    })();
-    return () => { active = false; };
-  }, [supabase]);
-  if (!url || failed) return null;
+  const url = useFirstImage("/assets/spot/login-art");
+  if (!url) return null;
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={url} alt="" onError={() => setFailed(true)} className="absolute inset-0 h-full w-full object-cover" />
+      <img src={url} alt="" className="absolute inset-0 h-full w-full object-cover" />
       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/30" />
     </>
   );
