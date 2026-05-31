@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { courseVisual, type Glyph } from "@/lib/assets";
+import { resolveStorageImage } from "@/lib/storage";
 
 const PATHS: Record<Glyph, React.ReactNode> = {
   org: (<><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="8.5" y="14" width="7" height="7" rx="1.5" /><path d="M6.5 10v2.5h11V10M12 12.5V14" /></>),
@@ -31,9 +32,9 @@ export default function CourseThumb({
     let active = true;
     (async () => {
       if (!v.thumb) return;
-      // Coba ambil gambar dari Supabase Storage (bucket course-media).
-      const { data, error } = await supabase.storage.from("course-media").createSignedUrl(v.thumb, 3600);
-      if (active && !error && data?.signedUrl) setUrl(data.signedUrl);
+      // Ambil gambar dari Storage, ekstensi jpg/png/webp dideteksi otomatis.
+      const signed = await resolveStorageImage(supabase, v.thumb);
+      if (active && signed) setUrl(signed);
     })();
     return () => { active = false; };
   }, [v.thumb, supabase]);

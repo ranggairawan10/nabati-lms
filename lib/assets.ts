@@ -1,5 +1,5 @@
 // Memetakan setiap kursus ke visual: gradien, ikon topik, dan path thumbnail di Supabase Storage.
-// Thumbnail dibaca dari bucket 'course-media' pada path 'thumbs/<slug>.jpg'.
+// Thumbnail dibaca dari bucket 'course-media' pada path 'thumbs/<slug>' (ekstensi jpg/png/webp dideteksi otomatis).
 // Jika file belum ada, komponen otomatis memakai gradien + ikon sebagai fallback,
 // jadi tampilan tetap bagus tanpa aset, dan menambah gambar tidak perlu deploy ulang.
 
@@ -17,11 +17,11 @@ export type Visual = { gradient: string; glyph: Glyph; thumb: string };
 
 // Pemetaan kursus yang sudah dikenal (ID dari seed Organization Design)
 const MAP: Record<string, Visual> = {
-  "1d000000-0000-0000-0000-000000000001": { gradient: TOPIC.ember, glyph: "org", thumb: "thumbs/od-efisiensi.jpg" },
-  "1d000000-0000-0000-0000-000000000002": { gradient: TOPIC.moss, glyph: "grid", thumb: "thumbs/model-operasi.jpg" },
-  "1d000000-0000-0000-0000-000000000003": { gradient: TOPIC.amber, glyph: "star", thumb: "thumbs/star-model.jpg" },
-  "1d000000-0000-0000-0000-000000000004": { gradient: TOPIC.indigo, glyph: "bars", thumb: "thumbs/beban-kerja.jpg" },
-  "1d000000-0000-0000-0000-000000000005": { gradient: TOPIC.violet, glyph: "people", thumb: "thumbs/manusia-ai.jpg" },
+  "1d000000-0000-0000-0000-000000000001": { gradient: TOPIC.ember, glyph: "org", thumb: "thumbs/od-efisiensi" },
+  "1d000000-0000-0000-0000-000000000002": { gradient: TOPIC.moss, glyph: "grid", thumb: "thumbs/model-operasi" },
+  "1d000000-0000-0000-0000-000000000003": { gradient: TOPIC.amber, glyph: "star", thumb: "thumbs/star-model" },
+  "1d000000-0000-0000-0000-000000000004": { gradient: TOPIC.indigo, glyph: "bars", thumb: "thumbs/beban-kerja" },
+  "1d000000-0000-0000-0000-000000000005": { gradient: TOPIC.violet, glyph: "people", thumb: "thumbs/manusia-ai" },
 };
 
 const POOL = [TOPIC.ember, TOPIC.moss, TOPIC.amber, TOPIC.indigo, TOPIC.violet];
@@ -38,5 +38,5 @@ export function courseVisual(c: { id: string; title: string }): Visual {
   const h = hash(c.title || c.id);
   // slug sederhana untuk path thumbnail opsional di Storage
   const slug = (c.title || "kursus").toLowerCase().normalize("NFKD").replace(/[^\w]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
-  return { gradient: POOL[h % POOL.length], glyph: GLYPHS[h % GLYPHS.length], thumb: `thumbs/${slug}.jpg` };
+  return { gradient: POOL[h % POOL.length], glyph: GLYPHS[h % GLYPHS.length], thumb: `thumbs/${slug}` };
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { resolveStorageImage } from "@/lib/storage";
 
 function LoginPhoto() {
   const supabase = createClient();
@@ -11,8 +12,8 @@ function LoginPhoto() {
   useEffect(() => {
     let active = true;
     (async () => {
-      const { data, error } = await supabase.storage.from("course-media").createSignedUrl("ui/login-art.jpg", 3600);
-      if (active && !error && data?.signedUrl) setUrl(data.signedUrl);
+      const signed = await resolveStorageImage(supabase, "ui/login-art");
+      if (active && signed) setUrl(signed);
     })();
     return () => { active = false; };
   }, [supabase]);

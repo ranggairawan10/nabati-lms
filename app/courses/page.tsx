@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import CourseThumb from "@/components/CourseThumb";
 import { useLang } from "@/lib/i18n";
+import { resolveStorageImage } from "@/lib/storage";
 
 type Course = {
   id: string;
@@ -22,8 +23,8 @@ function HeroPhoto() {
   useEffect(() => {
     let active = true;
     (async () => {
-      const { data, error } = await supabase.storage.from("course-media").createSignedUrl("ui/hero-main.jpg", 3600);
-      if (active && !error && data?.signedUrl) setUrl(data.signedUrl);
+      const signed = await resolveStorageImage(supabase, "ui/hero-main");
+      if (active && signed) setUrl(signed);
     })();
     return () => { active = false; };
   }, [supabase]);
